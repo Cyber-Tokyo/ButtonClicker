@@ -16,14 +16,23 @@
 package com.souleatergames.buttonclicker;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import java.util.Random;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -123,11 +132,14 @@ public class MainActivity extends Activity
     // Message buffer for sending messages
     byte[] mMsgBuf = new byte[2];
 
+    Vibrator vibe;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        vibe = (Vibrator) MainActivity.this.getSystemService(Context.VIBRATOR_SERVICE);
     // Create the Google Api Client with access to Plus and Games
     mGoogleApiClient = new GoogleApiClient.Builder(this)
         .addConnectionCallbacks(this)
@@ -201,6 +213,49 @@ public class MainActivity extends Activity
             case R.id.button_click_me:
                 // (gameplay) user clicked the "click me" button
                 scoreOnePoint();
+                break;
+            case R.id.imageButton1:
+                Log.d(TAG, "Card 1 Pushed");
+                cardPushed(0);
+                break;
+            case R.id.imageButton2:
+                Log.d(TAG, "Card 2 Pushed");
+                cardPushed(1);
+                break;
+            case R.id.imageButton3:
+                Log.d(TAG, "Card 3 Pushed");
+                cardPushed(2);
+                break;
+            case R.id.imageButton4:
+                Log.d(TAG, "Card 4 Pushed");
+                cardPushed(3);
+                break;
+            case R.id.imageButton5:
+                Log.d(TAG, "Card 5 Pushed");
+                cardPushed(4);
+                break;
+            case R.id.imageButton6:
+                Log.d(TAG, "Card 6 Pushed");
+                cardPushed(5);
+                break;
+            case R.id.imageButton7:
+                Log.d(TAG, "Card 7 Pushed");
+                cardPushed(6);
+                break;
+            case R.id.imageButton8:
+                Log.d(TAG, "Card 8 Pushed");
+                cardPushed(7);
+                break;
+            case R.id.button9:
+                submitPushed();
+                break;
+            case R.id.imageButtonMainCard:
+                mScore = 0;
+                gameFinished = true;
+                if(mScore == 0){
+                    playerWon("P1");
+                }
+                broadcastScore();
                 break;
         }
     }
@@ -388,6 +443,7 @@ public class MainActivity extends Activity
     void leaveRoom() {
         Log.d(TAG, "Leaving room.");
         mSecondsLeft = 0;
+        gameFinished = true;
         stopKeepingScreenOn();
         if (mRoomId != null) {
             Games.RealTimeMultiplayer.leave(mGoogleApiClient, this, mRoomId);
@@ -635,29 +691,85 @@ public class MainActivity extends Activity
     final static int GAME_DURATION = 20; // game duration, seconds.
     int mScore = 0; // user's current score
 
+    Random randomGenerator = new Random();
+    Deck deck;
+    Card mainCard;
+    Card[] hand;
+    ImageButton[] imageCard;
+    //ImageButton mainCardImage = (ImageButton) findViewById(R.id.imageButtonMainCard);
+    //TextView addUpTo = (TextView) findViewById(R.id.AddNumber);
+    TextView addUpTo;
+    int addTo;
+    Button btnSubmit;
+    int myTotalCardValue;
+    boolean gameFinished;
+    TextView myCardsLeft;
+
     // Reset game variables in preparation for a new game.
     void resetGameVars() {
         mSecondsLeft = GAME_DURATION;
-        mScore = 0;
+        gameFinished = false;
+        mScore = 8;
         mParticipantScore.clear();
         mFinishedParticipants.clear();
+        deck = new Deck();
+        mainCard = deck.drawCard();
+        addTo = randomNumberGenerator(mainCard.getRank() + 1, 30, randomGenerator);
+        addUpTo = (TextView)findViewById(R.id.AddNumber);
+        addUpTo.setText("" + addTo);
+    }
+
+    void resetNewRound(){
+        mSecondsLeft = GAME_DURATION;
+        mainCard = deck.drawCard();
+        setCardImage((ImageButton)findViewById(R.id.imageButtonMainCard), mainCard.getRank(), mainCard.getSuit());
+        addTo = randomNumberGenerator(mainCard.getRank() + 1, 30, randomGenerator);
+        addUpTo = (TextView)findViewById(R.id.AddNumber);
+        addUpTo.setText("" + addTo);
+
+        myTotalCardValue = 0;
+        btnSubmit.setText("Submit: " + myTotalCardValue);
+
+        for (int i = 0; i < 8; i++) {
+            if (hand[i].getSelected()) {
+                hand[i].setSelected(false);
+                imageCard[i].clearColorFilter();
+            }
+        }
     }
 
     // Start the gameplay phase of the game.
     void startGame(boolean multiplayer) {
         mMultiplayer = multiplayer;
         updateScoreDisplay();
-        broadcastScore(false);
+        broadcastScore();
         switchToScreen(R.id.screen_game);
 
         findViewById(R.id.button_click_me).setVisibility(View.VISIBLE);
+
+        btnSubmit = (Button) findViewById(R.id.button9);
+        imageCard = new ImageButton[8];
+        imageCard[0] = (ImageButton) findViewById(R.id.imageButton1);
+        imageCard[1] = (ImageButton) findViewById(R.id.imageButton2);
+        imageCard[2] = (ImageButton) findViewById(R.id.imageButton3);
+        imageCard[3] = (ImageButton) findViewById(R.id.imageButton4);
+        imageCard[4] = (ImageButton) findViewById(R.id.imageButton5);
+        imageCard[5] = (ImageButton) findViewById(R.id.imageButton6);
+        imageCard[6] = (ImageButton) findViewById(R.id.imageButton7);
+        imageCard[7] = (ImageButton) findViewById(R.id.imageButton8);
+        drawHand();
+        reenableCards();
+        myCardsLeft = (TextView) findViewById(R.id.score0);
+        myCardsLeft.setText("P1: "+cardLeftInHand());
+        setCardImage((ImageButton)findViewById(R.id.imageButtonMainCard), mainCard.getRank(), mainCard.getSuit());
 
         // run the gameTick() method every second to update the game.
         final Handler h = new Handler();
         h.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mSecondsLeft <= 0)
+                //if (mSecondsLeft <= 0)
+                if (gameFinished)
                     return;
                 gameTick();
                 h.postDelayed(this, 1000);
@@ -671,13 +783,19 @@ public class MainActivity extends Activity
             --mSecondsLeft;
 
         // update countdown
+        /*
         ((TextView) findViewById(R.id.countdown)).setText("0:" +
+                (mSecondsLeft < 10 ? "0" : "") + String.valueOf(mSecondsLeft));*/
+
+        ((TextView) findViewById(R.id.timer)).setText("0:" +
                 (mSecondsLeft < 10 ? "0" : "") + String.valueOf(mSecondsLeft));
 
         if (mSecondsLeft <= 0) {
             // finish game
-            findViewById(R.id.button_click_me).setVisibility(View.GONE);
-            broadcastScore(true);
+            //findViewById(R.id.button_click_me).setVisibility(View.GONE);
+            //broadcastScore(true);
+            vibe.vibrate(80);
+            resetNewRound();
         }
     }
 
@@ -690,7 +808,72 @@ public class MainActivity extends Activity
         updatePeerScoresDisplay();
 
         // broadcast our new score to our peers
-        broadcastScore(false);
+        broadcastScore();
+    }
+
+    void cardPushed(int i){
+        if (hand[i].getSelected()) {
+            myTotalCardValue -= hand[i].getRank();
+            //imageCard[i].getBackground().setAlpha(255);
+            //imageCard[i].setBackgroundResource(Color.TRANSPARENT);
+            imageCard[i].clearColorFilter();
+            hand[i].setSelected(false);
+        } else {
+            myTotalCardValue += hand[i].getRank();
+            //imageCard[i].getBackground().setAlpha(100);
+            //imageCard[i].setBackgroundResource(R.color.card_selected);
+            imageCard[i].setColorFilter(R.color.card_selected);
+            hand[i].setSelected(true);
+        }
+        btnSubmit.setText("Submit: " + myTotalCardValue);
+    }
+
+    void submitPushed(){
+        Log.d(TAG, myTotalCardValue + mainCard.getRank() +" =?= " + addTo);
+        if (myTotalCardValue + mainCard.getRank() == addTo) {
+            Toast.makeText(getApplicationContext(), "TRUE", Toast.LENGTH_SHORT).show();
+
+            for (int i = 0; i < 8; i++) {
+                if (hand[i].getSelected()) {
+                    hand[i].setSelected(false);
+                    imageCard[i].setEnabled(false);
+                    imageCard[i].setImageResource(R.drawable.zzback_of_card);
+                }
+            }
+            myCardsLeft.setText("P1: "+cardLeftInHand());
+            mScore = cardLeftInHand();
+            broadcastScore();
+            resetNewRound();
+            if(mScore == 0){
+                playerWon("P1");
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "FALSE", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    int cardLeftInHand(){
+        int cardsLeftHand = 0;
+        for(int i = 0 ; i <8 ;i++){
+            if(imageCard[i].isEnabled()){
+                cardsLeftHand++;
+            }
+        }
+
+        Log.d(TAG, cardsLeftHand+"");
+        return cardsLeftHand;
+
+    }
+
+    void reenableCards(){
+        for (int i = 0; i < 8; i++) {
+            if (!imageCard[i].isEnabled()) {
+                imageCard[i].setEnabled(true);
+            }
+            if(hand[i].getSelected()){
+                hand[i].setSelected(false);
+            }
+        }
     }
 
     /*
@@ -717,12 +900,12 @@ public class MainActivity extends Activity
         String sender = rtm.getSenderParticipantId();
         Log.d(TAG, "Message received: " + (char) buf[0] + "/" + (int) buf[1]);
 
-        if (buf[0] == 'F' || buf[0] == 'U') {
+        if (buf[0] == 'h') {
             // score update.
             int existingScore = mParticipantScore.containsKey(sender) ?
-                    mParticipantScore.get(sender) : 0;
+                    mParticipantScore.get(sender) : 8;
             int thisScore = (int) buf[1];
-            if (thisScore > existingScore) {
+            if (thisScore < existingScore) {
                 // this check is necessary because packets may arrive out of
                 // order, so we
                 // should only ever consider the highest score we received, as
@@ -745,12 +928,12 @@ public class MainActivity extends Activity
     }
 
     // Broadcast my score to everybody else.
-    void broadcastScore(boolean finalScore) {
+    void broadcastScore() {
         if (!mMultiplayer)
             return; // playing single-player mode
 
         // First byte in message indicates whether it's a final score or not
-        mMsgBuf[0] = (byte) (finalScore ? 'F' : 'U');
+        mMsgBuf[0] = (byte) ('h');
 
         // Second byte is the score.
         mMsgBuf[1] = (byte) mScore;
@@ -761,15 +944,15 @@ public class MainActivity extends Activity
                 continue;
             if (p.getStatus() != Participant.STATUS_JOINED)
                 continue;
-            if (finalScore) {
+
                 // final score notification must be sent via reliable message
-                Games.RealTimeMultiplayer.sendReliableMessage(mGoogleApiClient, null, mMsgBuf,
-                        mRoomId, p.getParticipantId());
-            } else {
+            Games.RealTimeMultiplayer.sendReliableMessage(mGoogleApiClient, null, mMsgBuf,
+                mRoomId, p.getParticipantId());
+
                 // it's an interim score notification, so we can use unreliable
-                Games.RealTimeMultiplayer.sendUnreliableMessage(mGoogleApiClient, mMsgBuf, mRoomId,
-                        p.getParticipantId());
-            }
+                /*Games.RealTimeMultiplayer.sendUnreliableMessage(mGoogleApiClient, mMsgBuf, mRoomId,
+                        p.getParticipantId());*/
+
         }
     }
 
@@ -783,7 +966,9 @@ public class MainActivity extends Activity
             R.id.button_accept_popup_invitation, R.id.button_invite_players,
             R.id.button_quick_game, R.id.button_see_invitations, R.id.button_sign_in,
             R.id.button_sign_out, R.id.button_click_me, R.id.button_single_player,
-            R.id.button_single_player_2
+            R.id.button_single_player_2, R.id.imageButton1, R.id.imageButton2, R.id.imageButton3,
+            R.id.imageButton4, R.id.imageButton5, R.id.imageButton6, R.id.imageButton7, R.id.imageButton8,
+            R.id.button9, R.id.imageButtonMainCard
     };
 
     // This array lists all the individual screens our game has.
@@ -839,7 +1024,7 @@ public class MainActivity extends Activity
 
     // updates the screen with the scores from our peers
     void updatePeerScoresDisplay() {
-        ((TextView) findViewById(R.id.score0)).setText(formatScore(mScore) + " - Me");
+        //((TextView) findViewById(R.id.score0)).setText(formatScore(mScore) + " - Me");
         int[] arr = {
                 R.id.score1, R.id.score2, R.id.score3
         };
@@ -852,10 +1037,13 @@ public class MainActivity extends Activity
                     continue;
                 if (p.getStatus() != Participant.STATUS_JOINED)
                     continue;
-                int score = mParticipantScore.containsKey(pid) ? mParticipantScore.get(pid) : 0;
-                ((TextView) findViewById(arr[i])).setText(formatScore(score) + " - " +
-                        p.getDisplayName());
+                int score = mParticipantScore.containsKey(pid) ? mParticipantScore.get(pid) : 8;
+                ((TextView) findViewById(arr[i])).setText("P"+(i+2)+": "+score /*+" - " +
+                        p.getDisplayName()*/);
                 ++i;
+                if(score == 0){
+                    playerWon(p.getDisplayName());
+                }
             }
         }
 
@@ -881,5 +1069,241 @@ public class MainActivity extends Activity
     // Clears the flag that keeps the screen on.
     void stopKeepingScreenOn() {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+
+    private int randomNumberGenerator(int start, int end, Random rGen) {
+        if (start < 2) {
+            start = 2;
+        }
+        int range = (end - start + 1);
+        double fraction = range * rGen.nextDouble();
+
+        return (int) (fraction + start);
+    }
+
+    private void drawHand() {
+        hand = new Card[8];
+        for (int i = 0; i < 8; i++) {
+            hand[i] = deck.drawCard();
+            setCardImage(imageCard[i], hand[i].getRank(), hand[i].getSuit());
+        }
+    }
+
+    private void setCardImage(ImageButton card, int rank, int suit){
+        if(suit == 0){
+            switch (rank){
+                case 1:
+                    card.setImageResource(R.drawable.banana_0001);
+                    break;
+                case 2:
+                    card.setImageResource(R.drawable.banana_0010);
+                    break;
+                case 3:
+                    card.setImageResource(R.drawable.banana_0011);
+                    break;
+                case 4:
+                    card.setImageResource(R.drawable.banana_0100);
+                    break;
+                case 5:
+                    card.setImageResource(R.drawable.banana_0101);
+                    break;
+                case 6:
+                    card.setImageResource(R.drawable.banana_0110);
+                    break;
+                case 7:
+                    card.setImageResource(R.drawable.banana_0111);
+                    break;
+                case 8:
+                    card.setImageResource(R.drawable.banana_1000);
+                    break;
+                case 9:
+                    card.setImageResource(R.drawable.banana_1001);
+                    break;
+                case 10:
+                    card.setImageResource(R.drawable.banana_a);
+                    break;
+                case 11:
+                    card.setImageResource(R.drawable.banana_b);
+                    break;
+                case 12:
+                    card.setImageResource(R.drawable.banana_c);
+                    break;
+                case 13:
+                    card.setImageResource(R.drawable.banana_d);
+                    break;
+                case 14:
+                    card.setImageResource(R.drawable.banana_e);
+                    break;
+                case 15:
+                    card.setImageResource(R.drawable.banana_f);
+                    break;
+            }
+        }
+
+        else if(suit == 1){
+            switch (rank){
+                case 1:
+                    card.setImageResource(R.drawable.cat_0001);
+                    break;
+                case 2:
+                    card.setImageResource(R.drawable.cat_0010);
+                    break;
+                case 3:
+                    card.setImageResource(R.drawable.cat_0011);
+                    break;
+                case 4:
+                    card.setImageResource(R.drawable.cat_0100);
+                    break;
+                case 5:
+                    card.setImageResource(R.drawable.cat_0101);
+                    break;
+                case 6:
+                    card.setImageResource(R.drawable.cat_0110);
+                    break;
+                case 7:
+                    card.setImageResource(R.drawable.cat_0111);
+                    break;
+                case 8:
+                    card.setImageResource(R.drawable.cat_1000);
+                    break;
+                case 9:
+                    card.setImageResource(R.drawable.cat_1001);
+                    break;
+                case 10:
+                    card.setImageResource(R.drawable.cat_a);
+                    break;
+                case 11:
+                    card.setImageResource(R.drawable.cat_b);
+                    break;
+                case 12:
+                    card.setImageResource(R.drawable.cat_c);
+                    break;
+                case 13:
+                    card.setImageResource(R.drawable.cat_d);
+                    break;
+                case 14:
+                    card.setImageResource(R.drawable.cat_e);
+                    break;
+                case 15:
+                    card.setImageResource(R.drawable.cat_f);
+                    break;
+            }
+        }
+        else if(suit == 2){
+            switch (rank){
+                case 1:
+                    card.setImageResource(R.drawable.philosoraptor_0001);
+                    break;
+                case 2:
+                    card.setImageResource(R.drawable.philosoraptor_0010);
+                    break;
+                case 3:
+                    card.setImageResource(R.drawable.philosoraptor_0011);
+                    break;
+                case 4:
+                    card.setImageResource(R.drawable.philosoraptor_0100);
+                    break;
+                case 5:
+                    card.setImageResource(R.drawable.philosoraptor_0101);
+                    break;
+                case 6:
+                    card.setImageResource(R.drawable.philosoraptor_0110);
+                    break;
+                case 7:
+                    card.setImageResource(R.drawable.philosoraptor_0111);
+                    break;
+                case 8:
+                    card.setImageResource(R.drawable.philosoraptor_1000);
+                    break;
+                case 9:
+                    card.setImageResource(R.drawable.philosoraptor_1001);
+                    break;
+                case 10:
+                    card.setImageResource(R.drawable.philosoraptor_a);
+                    break;
+                case 11:
+                    card.setImageResource(R.drawable.philosoraptor_b);
+                    break;
+                case 12:
+                    card.setImageResource(R.drawable.philosoraptor_c);
+                    break;
+                case 13:
+                    card.setImageResource(R.drawable.philosoraptor_d);
+                    break;
+                case 14:
+                    card.setImageResource(R.drawable.philosoraptor_e);
+                    break;
+                case 15:
+                    card.setImageResource(R.drawable.philosoraptor_f);
+                    break;
+            }
+        }
+        else if(suit == 3){
+            switch (rank){
+                case 1:
+                    card.setImageResource(R.drawable.cursor_0001);
+                    break;
+                case 2:
+                    card.setImageResource(R.drawable.cursor_0010);
+                    break;
+                case 3:
+                    card.setImageResource(R.drawable.cursor_0011);
+                    break;
+                case 4:
+                    card.setImageResource(R.drawable.cursor_0100);
+                    break;
+                case 5:
+                    card.setImageResource(R.drawable.cursor_0101);
+                    break;
+                case 6:
+                    card.setImageResource(R.drawable.cursor_0110);
+                    break;
+                case 7:
+                    card.setImageResource(R.drawable.cursor_0111);
+                    break;
+                case 8:
+                    card.setImageResource(R.drawable.cursor_1000);
+                    break;
+                case 9:
+                    card.setImageResource(R.drawable.cursor_1001);
+                    break;
+                case 10:
+                    card.setImageResource(R.drawable.cursor_a);
+                    break;
+                case 11:
+                    card.setImageResource(R.drawable.cursor_b);
+                    break;
+                case 12:
+                    card.setImageResource(R.drawable.cursor_c);
+                    break;
+                case 13:
+                    card.setImageResource(R.drawable.cursor_d);
+                    break;
+                case 14:
+                    card.setImageResource(R.drawable.cursor_e);
+                    break;
+                case 15:
+                    card.setImageResource(R.drawable.cursor_f);
+                    break;
+            }
+        }
+    }
+
+    void playerWon(String winner){
+        gameFinished = true;
+        AlertDialog timeUP = new AlertDialog.Builder(MainActivity.this).create();
+        timeUP.setCanceledOnTouchOutside(false);
+        timeUP.setCancelable(false);
+        timeUP.setTitle("Winner");
+        timeUP.setMessage(winner + " wins!");
+        timeUP.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        switchToMainScreen();
+                        dialog.dismiss();
+                    }
+                });
+        timeUP.show();
     }
 }
