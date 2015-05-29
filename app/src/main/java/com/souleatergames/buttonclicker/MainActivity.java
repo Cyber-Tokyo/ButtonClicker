@@ -434,6 +434,7 @@ public class MainActivity extends Activity
     public boolean onKeyDown(int keyCode, KeyEvent e) {
         if (keyCode == KeyEvent.KEYCODE_BACK && mCurScreen == R.id.screen_game) {
             leaveRoom();
+
             return true;
         }
         return super.onKeyDown(keyCode, e);
@@ -708,7 +709,6 @@ public class MainActivity extends Activity
     // Reset game variables in preparation for a new game.
     void resetGameVars() {
         mSecondsLeft = GAME_DURATION;
-        gameFinished = false;
         mScore = 8;
         mParticipantScore.clear();
         mFinishedParticipants.clear();
@@ -717,6 +717,7 @@ public class MainActivity extends Activity
         addTo = randomNumberGenerator(mainCard.getRank() + 1, 30, randomGenerator);
         addUpTo = (TextView)findViewById(R.id.AddNumber);
         addUpTo.setText("" + addTo);
+        myTotalCardValue = 0;
     }
 
     void resetNewRound(){
@@ -747,7 +748,9 @@ public class MainActivity extends Activity
 
         findViewById(R.id.button_click_me).setVisibility(View.VISIBLE);
 
+        gameFinished = false;
         btnSubmit = (Button) findViewById(R.id.button9);
+        btnSubmit.setText("Submit: " + myTotalCardValue);
         imageCard = new ImageButton[8];
         imageCard[0] = (ImageButton) findViewById(R.id.imageButton1);
         imageCard[1] = (ImageButton) findViewById(R.id.imageButton2);
@@ -867,12 +870,9 @@ public class MainActivity extends Activity
 
     void reenableCards(){
         for (int i = 0; i < 8; i++) {
-            if (!imageCard[i].isEnabled()) {
-                imageCard[i].setEnabled(true);
-            }
-            if(hand[i].getSelected()){
-                hand[i].setSelected(false);
-            }
+            Log.d(TAG, "enabled: " +imageCard[i].isEnabled() +" selected: " + hand[i].getSelected());
+            imageCard[i].setEnabled(true);
+            imageCard[i].clearColorFilter();
         }
     }
 
