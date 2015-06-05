@@ -28,9 +28,9 @@
     <string name="signin_other_error">There was an issue with sign in. Please try again later.</string>
     <string name="action_settings">Button Clicker</string>
     <string name="addTo">Add to</string>
-    <string name="otherPlayer2">P2: 4</string>
-    <string name="otherPlayer3">P3: 7</string>
-    <string name="otherPlayer4">P4: 5</string>
+    <string name="otherPlayer2"></string>
+    <string name="otherPlayer3"></string>
+    <string name="otherPlayer4"></string>
     <string name="submit">Submit</string>
 
 </resources>

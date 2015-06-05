@@ -92,16 +92,6 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/otherPlayer2"
-                android:id="@+id/score0"
-                android:layout_weight="1"
-                android:textColor="#fff"
-                android:gravity="center_horizontal" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/otherPlayer3"
                 android:id="@+id/score1"
                 android:layout_weight="1"
                 android:textColor="#fff"
@@ -111,8 +101,18 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/otherPlayer4"
+                android:text="@string/otherPlayer3"
                 android:id="@+id/score2"
+                android:layout_weight="1"
+                android:textColor="#fff"
+                android:gravity="center_horizontal" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/otherPlayer4"
+                android:id="@+id/score3"
                 android:layout_weight="1"
                 android:textColor="#fff"
                 android:gravity="center_horizontal" />
@@ -319,27 +319,6 @@
             android:layout_marginTop="5dp" />
         <!--</GridLayout>-->
     </LinearLayout>
-
-
-    <!-- GAMEPLAY SCREEN -->
-    <LinearLayout android:id="@+id/screen_game_no" style="@style/LLScreen"
-        android:background="@color/background">
-        <TextView android:id="@+id/instructions"
-            style="@style/Instructions" android:text="@string/instructions" />
-        <TextView android:id="@+id/my_score" style="@style/ScoreDisplay" />
-        <Button android:id="@+id/button_click_me"
-                style="@style/GameButton"
-                android:text="@string/click_me"
-                android:layout_marginBottom="20dp" />
-        <TextView android:id="@+id/countdown" style="@style/FigureLabel" />
-        <LinearLayout style="@style/ScoresBox">
-            <TextView android:id="@+id/score3" style="@style/ScoreText" />
-            <TextView android:id="@+id/scr" style="@style/ScoreText" />
-            <TextView android:id="@+id/sor" style="@style/ScoreText" />
-            <TextView android:id="@+id/cor" style="@style/ScoreText" />
-        </LinearLayout>
-    </LinearLayout>
-
 
 </FrameLayout>
 

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import java.util.Arrays;
 import java.util.Random;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -96,7 +97,10 @@ public class MainActivity extends Activity
     String mIncomingInvitationId = null;
 
     // Message buffer for sending messages
-    byte[] mMsgBuf = new byte[2];
+    byte[] mMsgBuf = new byte[2]; //mMsgBug is int of 1 byte + 1 byte to identify as message
+    byte[] mSeedBuf = new byte[9]; //mSeedBuf is long of 8 bytes + 1 byte to identify as seed
+
+    long mSeed;
 
     Vibrator vibe;
 
@@ -175,10 +179,6 @@ public class MainActivity extends Activity
             case R.id.button_quick_game:
                 // user wants to play against a random opponent right now
                 startQuickGame();
-                break;
-            case R.id.button_click_me:
-                // (gameplay) user clicked the "click me" button
-                scoreOnePoint();
                 break;
             case R.id.imageButton1:
                 Log.d(TAG, "Card 1 Pushed");
@@ -261,7 +261,22 @@ public class MainActivity extends Activity
                 if (responseCode == Activity.RESULT_OK) {
                     // ready to start playing
                     Log.d(TAG, "Starting game (waiting room returned OK).");
-                    startGame(true);
+
+                    //"King" will generate a seed and broadcast it to all other players
+                    if (amIKing()) {
+                        mSeed = System.currentTimeMillis();
+                        Log.d(TAG, "seed " + mSeed);
+                        broadcastSeed(mSeed);
+                    }
+                    //wait 5sec before beginning game so players can receive seed
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            startGame(true);
+                        }
+                    }, 5000);
+
                 } else if (responseCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                     // player indicated that they want to leave the room
                     leaveRoom();
@@ -388,6 +403,7 @@ public class MainActivity extends Activity
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
           Log.w(TAG,
               "GameHelper: client was already connected on onStart()");
+              switchToMainScreen();
         } else {
           Log.d(TAG,"Connecting client.");
           mGoogleApiClient.connect();
@@ -658,7 +674,7 @@ public class MainActivity extends Activity
     final static int GAME_DURATION = 20; // game duration, seconds.
     int mScore = 0; // user's current score
 
-    Random randomGenerator = new Random();
+    Random randomGenerator;
     Deck deck;
     Card mainCard;
     Card[] hand;
@@ -670,7 +686,8 @@ public class MainActivity extends Activity
     Button btnSubmit;
     int myTotalCardValue;
     boolean gameFinished;
-    TextView myCardsLeft;
+    TextView cardsLeft;
+    //TextView myCardsLeft;
 
     // Reset game variables in preparation for a new game.
     void resetGameVars() {
@@ -678,22 +695,16 @@ public class MainActivity extends Activity
         mScore = 8;
         mParticipantScore.clear();
         mFinishedParticipants.clear();
-        deck = new Deck();
-        mainCard = deck.drawCard();
-        addTo = randomNumberGenerator(mainCard.getRank() + 1, 30, randomGenerator);
-        addUpTo = (TextView)findViewById(R.id.AddNumber);
-        addUpTo.setText("" + addTo);
-        myTotalCardValue = 0;
     }
 
     void resetNewRound(){
         mSecondsLeft = GAME_DURATION;
+
         mainCard = deck.drawCard();
-        setCardImage((ImageButton)findViewById(R.id.imageButtonMainCard), mainCard.getRank(), mainCard.getSuit());
+        setCardImage((ImageButton) findViewById(R.id.imageButtonMainCard), mainCard.getRank(), mainCard.getSuit());
         addTo = randomNumberGenerator(mainCard.getRank() + 1, 30, randomGenerator);
         addUpTo = (TextView)findViewById(R.id.AddNumber);
         addUpTo.setText("" + addTo);
-
         myTotalCardValue = 0;
         btnSubmit.setText("Submit: " + myTotalCardValue);
 
@@ -703,6 +714,7 @@ public class MainActivity extends Activity
                 imageCard[i].clearColorFilter();
             }
         }
+        cardsLeft.setText(deck.getCardsRemaining()+"");
     }
 
     // Start the gameplay phase of the game.
@@ -712,9 +724,18 @@ public class MainActivity extends Activity
         broadcastScore();
         switchToScreen(R.id.screen_game);
 
-        findViewById(R.id.button_click_me).setVisibility(View.VISIBLE);
-
+        //mSeed = System.currentTimeMillis();
         gameFinished = false;
+        randomGenerator = mMultiplayer ? new Random(mSeed) : new Random();
+
+        deck = mMultiplayer ? new Deck(mSeed): new Deck();
+        mainCard = deck.drawCard();
+
+        addTo = randomNumberGenerator(mainCard.getRank() + 1, 30, randomGenerator);
+        addUpTo = (TextView)findViewById(R.id.AddNumber);
+        addUpTo.setText(addTo+"");
+        myTotalCardValue = 0;
+
         btnSubmit = (Button) findViewById(R.id.button9);
         btnSubmit.setText("Submit: " + myTotalCardValue);
         imageCard = new ImageButton[8];
@@ -726,10 +747,19 @@ public class MainActivity extends Activity
         imageCard[5] = (ImageButton) findViewById(R.id.imageButton6);
         imageCard[6] = (ImageButton) findViewById(R.id.imageButton7);
         imageCard[7] = (ImageButton) findViewById(R.id.imageButton8);
-        drawHand();
+        cardsLeft = (TextView) findViewById(R.id.cardsLeft);
+
+        if (mMultiplayer){
+            setUpMultiplayerHand();
+        }
+        else{
+            drawHand();
+        }
+        cardsLeft.setText(deck.getCardsRemaining()+"");
+
         reenableCards();
-        myCardsLeft = (TextView) findViewById(R.id.score0);
-        myCardsLeft.setText("P1: "+cardLeftInHand());
+        //myCardsLeft = (TextView) findViewById(R.id.score0);
+        //myCardsLeft.setText("P1: "+cardLeftInHand());
         setCardImage((ImageButton)findViewById(R.id.imageButtonMainCard), mainCard.getRank(), mainCard.getSuit());
 
         // run the gameTick() method every second to update the game.
@@ -738,7 +768,7 @@ public class MainActivity extends Activity
             @Override
             public void run() {
                 //if (mSecondsLeft <= 0)
-                if (gameFinished)
+                if (gameFinished || mCurScreen != R.id.screen_game)
                     return;
                 gameTick();
                 h.postDelayed(this, 1000);
@@ -760,24 +790,13 @@ public class MainActivity extends Activity
                 (mSecondsLeft < 10 ? "0" : "") + String.valueOf(mSecondsLeft));
 
         if (mSecondsLeft <= 0) {
-            // finish game
-            //findViewById(R.id.button_click_me).setVisibility(View.GONE);
-            //broadcastScore(true);
+            //timer runs out: vibrate then new round
             vibe.vibrate(80);
             resetNewRound();
         }
-    }
-
-    // indicates the player scored one point
-    void scoreOnePoint() {
-        if (mSecondsLeft <= 0)
-            return; // too late!
-        ++mScore;
-        updateScoreDisplay();
-        updatePeerScoresDisplay();
-
-        // broadcast our new score to our peers
-        broadcastScore();
+        if (deck.getCardsRemaining() <= 0){
+            deckEmptyWinner();
+        }
     }
 
     void cardPushed(int i){
@@ -809,9 +828,10 @@ public class MainActivity extends Activity
                     imageCard[i].setImageResource(R.drawable.zzback_of_card);
                 }
             }
-            myCardsLeft.setText("P1: "+cardLeftInHand());
+            //myCardsLeft.setText("P1: "+cardLeftInHand());
             mScore = cardLeftInHand();
             broadcastScore();
+            broadcastNewRound();
             resetNewRound();
             if(mScore == 0){
                 playerWon("P1");
@@ -829,14 +849,13 @@ public class MainActivity extends Activity
             }
         }
 
-        Log.d(TAG, cardsLeftHand+"");
+        Log.d(TAG, "cards left in hand" +cardsLeftHand+"");
         return cardsLeftHand;
 
     }
 
     void reenableCards(){
         for (int i = 0; i < 8; i++) {
-            Log.d(TAG, "enabled: " +imageCard[i].isEnabled() +" selected: " + hand[i].getSelected());
             imageCard[i].setEnabled(true);
             imageCard[i].clearColorFilter();
         }
@@ -864,9 +883,9 @@ public class MainActivity extends Activity
     public void onRealTimeMessageReceived(RealTimeMessage rtm) {
         byte[] buf = rtm.getMessageData();
         String sender = rtm.getSenderParticipantId();
-        Log.d(TAG, "Message received: " + (char) buf[0] + "/" + (int) buf[1]);
 
         if (buf[0] == 'h') {
+            Log.d(TAG, "Hand Message received: " + (char) buf[0] + "/" + (int) buf[1]);
             // score update.
             int existingScore = mParticipantScore.containsKey(sender) ?
                     mParticipantScore.get(sender) : 8;
@@ -884,12 +903,15 @@ public class MainActivity extends Activity
 
             // update the scores on the screen
             updatePeerScoresDisplay();
-
-            // if it's a final score, mark this participant as having finished
-            // the game
-            if ((char) buf[0] == 'F') {
-                mFinishedParticipants.add(rtm.getSenderParticipantId());
-            }
+        }
+        else if(buf[0] == 'n'){
+            Log.d(TAG, "Other player scored start new round");
+            resetNewRound();
+        }
+        else {
+           Log.d(TAG, "Message received: " + buf[0] + buf[1] + buf[2] + buf[3] + buf[4] + buf[5] + buf[6] + buf[7]);
+           Log.d(TAG, "Message in Long: " + bytesToLong(buf));
+           mSeed = bytesToLong(buf);
         }
     }
 
@@ -911,13 +933,49 @@ public class MainActivity extends Activity
             if (p.getStatus() != Participant.STATUS_JOINED)
                 continue;
 
-                // final score notification must be sent via reliable message
+            // final score notification must be sent via reliable message
             Games.RealTimeMultiplayer.sendReliableMessage(mGoogleApiClient, null, mMsgBuf,
-                mRoomId, p.getParticipantId());
+                    mRoomId, p.getParticipantId());
 
-                // it's an interim score notification, so we can use unreliable
+            // it's an interim score notification, so we can use unreliable
                 /*Games.RealTimeMultiplayer.sendUnreliableMessage(mGoogleApiClient, mMsgBuf, mRoomId,
                         p.getParticipantId());*/
+
+        }
+    }
+
+    void broadcastSeed(long seed){
+        mSeedBuf = longToBytes(seed);
+        // Send seed to every other participant.
+        for (Participant p : mParticipants) {
+            if (p.getParticipantId().equals(mMyId)){
+                continue;
+            }
+            if (p.getStatus() != Participant.STATUS_JOINED) {
+                continue;
+            }
+            Log.d(TAG, "Seed Sent: " + bytesToLong(mSeedBuf));
+            Games.RealTimeMultiplayer.sendReliableMessage(mGoogleApiClient, null, mSeedBuf,
+                    mRoomId, p.getParticipantId());
+        }
+    }
+
+    void broadcastNewRound() {
+        if (!mMultiplayer)
+            return; // playing single-player mode
+
+        // First byte in message indicates new round
+        mMsgBuf[0] = (byte) ('n');
+
+        // Send to every other participant.
+        for (Participant p : mParticipants) {
+            if (p.getParticipantId().equals(mMyId))
+                continue;
+            if (p.getStatus() != Participant.STATUS_JOINED)
+                continue;
+
+            Games.RealTimeMultiplayer.sendReliableMessage(mGoogleApiClient, null, mMsgBuf,
+                    mRoomId, p.getParticipantId());
 
         }
     }
@@ -931,7 +989,7 @@ public class MainActivity extends Activity
     final static int[] CLICKABLES = {
             R.id.button_accept_popup_invitation, R.id.button_invite_players,
             R.id.button_quick_game, R.id.button_see_invitations, R.id.button_sign_in,
-            R.id.button_sign_out, R.id.button_click_me, R.id.button_single_player,
+            R.id.button_sign_out, R.id.button_single_player,
             R.id.button_single_player_2, R.id.imageButton1, R.id.imageButton2, R.id.imageButton3,
             R.id.imageButton4, R.id.imageButton5, R.id.imageButton6, R.id.imageButton7, R.id.imageButton8,
             R.id.button9, R.id.imageButtonMainCard
@@ -977,7 +1035,7 @@ public class MainActivity extends Activity
 
     // updates the label that shows my score
     void updateScoreDisplay() {
-        ((TextView) findViewById(R.id.my_score)).setText(formatScore(mScore));
+        //((TextView) findViewById(R.id.my_score)).setText(formatScore(mScore));
     }
 
     // formats a score as a three-digit number
@@ -1004,8 +1062,7 @@ public class MainActivity extends Activity
                 if (p.getStatus() != Participant.STATUS_JOINED)
                     continue;
                 int score = mParticipantScore.containsKey(pid) ? mParticipantScore.get(pid) : 8;
-                ((TextView) findViewById(arr[i])).setText("P"+(i+2)+": "+score /*+" - " +
-                        p.getDisplayName()*/);
+                ((TextView) findViewById(arr[i])).setText("P"+(i+2)+": "+score);
                 ++i;
                 if(score == 0){
                     playerWon(p.getDisplayName());
@@ -1262,14 +1319,140 @@ public class MainActivity extends Activity
         timeUP.setCanceledOnTouchOutside(false);
         timeUP.setCancelable(false);
         timeUP.setTitle("Winner");
-        timeUP.setMessage(winner + " wins!");
+        if(winner.equals("P1")){
+            timeUP.setMessage("You win!");
+        }
+        else {
+            timeUP.setMessage(winner + " wins!");
+        }
         timeUP.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        switchToMainScreen();
+                        //switchToMainScreen();
+                        leaveRoom();
                         dialog.dismiss();
                     }
                 });
         timeUP.show();
     }
+
+    void deckEmptyWinner(){
+        Set<String> winner = new HashSet<String>();
+        int currentLowHand = 8;
+        for(Participant p : mParticipants){
+            String pid = p.getParticipantId();
+            if (p.getStatus() != Participant.STATUS_JOINED)
+                continue;
+            int handScore = mParticipantScore.containsKey(pid) ? mParticipantScore.get(pid) : 8;
+
+            if(handScore == currentLowHand){
+                winner.add(p.getDisplayName());
+            }
+            if(handScore < currentLowHand){
+                winner.clear();
+                winner.add(p.getDisplayName());
+                currentLowHand = handScore;
+            }
+        }
+        if (cardLeftInHand() == currentLowHand){
+            String fullWinners = "You";
+            for(String s : winner){
+                fullWinners += " and " + s;
+            }
+
+            playerWon(fullWinners);
+        }
+        else if(cardLeftInHand() < currentLowHand){
+            playerWon("P1");
+        }
+        else{
+            String fullWinners = "";
+            for(String s : winner){
+                fullWinners +=  s + ", ";
+            }
+            playerWon(fullWinners);
+        }
+    }
+
+    String[] getSortedParticipantID(){
+        int numPlayers = mParticipants.size();
+        String[] participantsID = new String[numPlayers];
+        for (int i = 0 ; i < numPlayers ; i++){
+            participantsID[i] = mParticipants.get(i).getParticipantId();
+        }
+       Arrays.sort(participantsID);
+       return participantsID;
+    }
+
+    void setUpMultiplayerHand(){
+        String[] participantsID = getSortedParticipantID();
+        int numPlayers = participantsID.length;
+        int index = 0;
+
+        for(int i = 0; i < participantsID.length ; i++){
+            if (participantsID[i].equals(mMyId)){
+                index = i;
+            }
+        }
+
+        switch (index){
+            case 0:
+                drawHand();
+                for(int i = 0 ; i < numPlayers-1; i++){
+                    wasteCards(8);
+                }
+                break;
+            case 1:
+                wasteCards(8);
+                drawHand();
+                for(int i = 0 ; i < numPlayers-2; i++){
+                    wasteCards(8);
+                }
+                break;
+            case 2:
+                wasteCards(16);
+                drawHand();
+                for(int i = 0 ; i < numPlayers-3; i++){
+                    wasteCards(8);
+                }
+                break;
+            case 3:
+                wasteCards(24);
+                drawHand();
+                break;
+        }
+    }
+
+    void wasteCards(int x){
+        Card temp;
+        for(int i = 0 ; i < x ; i++){
+            temp = deck.drawCard();
+            //Log.d(TAG, "temp: " + temp.getRank() +" " + temp.getSuit());
+        }
+    }
+
+    boolean amIKing(){
+        String[] participantsID = getSortedParticipantID();
+        return (participantsID[0].equals(mMyId));
+    }
+
+    //coverts the long seed to bytes for sending as message
+    public static byte[] longToBytes(long l) {
+        byte[] result = new byte[8];
+        for (int i = 7; i >= 0; i--) {
+            result[i] = (byte)(l & 0xFF);
+            l >>= 8;
+        }
+        return result;
+    }
+    //converts the byte[] to long seed
+    public static long bytesToLong(byte[] b) {
+        long result = 0;
+        for (int i = 0; i < 8; i++) {
+            result <<= 8;
+            result |= (b[i] & 0xFF);
+        }
+        return result;
+    }
+
 }
