@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Arrays;
@@ -38,6 +39,7 @@ import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 import com.google.android.gms.plus.Plus;
 
 import com.google.example.games.basegameutils.BaseGameUtils;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -701,7 +703,7 @@ public class MainActivity extends Activity
         mSecondsLeft = GAME_DURATION;
 
         mainCard = deck.drawCard();
-        setCardImage((ImageButton) findViewById(R.id.imageButtonMainCard), mainCard.getRank(), mainCard.getSuit());
+        setCardImage((ImageView) findViewById(R.id.imageButtonMainCard), mainCard.getRank(), mainCard.getSuit());
         addTo = randomNumberGenerator(mainCard.getRank() + 1, 30, randomGenerator);
         addUpTo = (TextView)findViewById(R.id.AddNumber);
         addUpTo.setText("" + addTo);
@@ -731,6 +733,14 @@ public class MainActivity extends Activity
         deck = mMultiplayer ? new Deck(mSeed): new Deck();
         mainCard = deck.drawCard();
 
+        /*
+        ImageView playCard = (ImageView) findViewById(R.id.imageButtonMainCard);
+        String testImageURL = Images.imageFullURLS[0];
+        Picasso.with(this)
+                .load(testImageURL)
+                .into(playCard);
+        */
+
         addTo = randomNumberGenerator(mainCard.getRank() + 1, 30, randomGenerator);
         addUpTo = (TextView)findViewById(R.id.AddNumber);
         addUpTo.setText(addTo+"");
@@ -749,6 +759,8 @@ public class MainActivity extends Activity
         imageCard[7] = (ImageButton) findViewById(R.id.imageButton8);
         cardsLeft = (TextView) findViewById(R.id.cardsLeft);
 
+
+
         if (mMultiplayer){
             setUpMultiplayerHand();
         }
@@ -760,7 +772,9 @@ public class MainActivity extends Activity
         reenableCards();
         //myCardsLeft = (TextView) findViewById(R.id.score0);
         //myCardsLeft.setText("P1: "+cardLeftInHand());
-        setCardImage((ImageButton)findViewById(R.id.imageButtonMainCard), mainCard.getRank(), mainCard.getSuit());
+
+        setCardImage((ImageView)findViewById(R.id.imageButtonMainCard), mainCard.getRank(), mainCard.getSuit());
+
 
         // run the gameTick() method every second to update the game.
         final Handler h = new Handler();
@@ -1113,7 +1127,15 @@ public class MainActivity extends Activity
         }
     }
 
-    private void setCardImage(ImageButton card, int rank, int suit){
+    private void setCardImage(ImageView card, int rank, int suit){
+
+        /*String cardImageURL = Images.getImageURL(rank, suit, isHandCard);
+
+        Picasso.with(this)
+                .load(cardImageURL)
+                .into(card);
+        */
+
         if(suit == 0){
             switch (rank){
                 case 1:
@@ -1427,7 +1449,7 @@ public class MainActivity extends Activity
         Card temp;
         for(int i = 0 ; i < x ; i++){
             temp = deck.drawCard();
-            //Log.d(TAG, "temp: " + temp.getRank() +" " + temp.getSuit());
+            //Log.d(TAkG, "temp: " + temp.getRank() +" " + temp.getSuit());
         }
     }
 

@@ -69,12 +69,10 @@
     </LinearLayout>
 
     <!-- GAMEPLAY SCREEN -->
-    <LinearLayout android:id="@+id/screen_game"  style="@style/LLScreen"
+    <LinearLayout android:id="@+id/screen_game"
         android:background="@color/background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:orientation="vertical"
         android:weightSum="1.0">
 
@@ -90,7 +88,6 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/otherPlayer2"
                 android:id="@+id/score1"
                 android:layout_weight="1"
@@ -100,7 +97,6 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/otherPlayer3"
                 android:id="@+id/score2"
                 android:layout_weight="1"
@@ -110,7 +106,6 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/otherPlayer4"
                 android:id="@+id/score3"
                 android:layout_weight="1"
@@ -120,7 +115,6 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:id="@+id/timer"
                 android:layout_weight="1"
                 android:textColor="#fff7ff45"
@@ -132,7 +126,7 @@
             android:layout_height="0dp"
             android:orientation="horizontal"
             android:padding="0dp"
-            android:layout_weight="0.4">
+            android:layout_weight="0.43">
 
             <TextView
                 android:layout_width="0dp"
@@ -141,60 +135,51 @@
                 android:layout_weight="0.1"
                 android:textColor="#fff" />
 
-            <ImageView
+            <!--<ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/deckBack"
                 android:src="@drawable/zzback_of_card"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
-                android:layout_weight="0.9" />
+                android:layout_weight="0.9" />-->
 
-            <ImageButton
+            <ImageView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/imageButtonMainCard"
-                android:layout_weight="0.9"
-                android:scaleType="fitCenter"
-                android:cropToPadding="false"
-                android:longClickable="true"
-                android:background="@android:color/transparent"
+                android:layout_weight="1.39"
                 android:src="@drawable/philosoraptor_1000" />
 
         </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.1">
+            android:layout_weight="0.07"
+            android:layout_marginBottom="5dp">
 
             <TextView
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:text="@string/addTo"
                 android:id="@+id/operation"
                 android:background="#A4C2F4"
-                android:padding="10dp"
-                android:paddingLeft="40dp"
-                android:paddingRight="40dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="0dp"
-                android:gravity="center_vertical|center_horizontal" />
+                android:gravity="center_vertical|center_horizontal"
+                android:layout_weight="1"/>
 
             <TextView
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:text="14"
                 android:id="@+id/AddNumber"
                 android:background="#FFE599"
-                android:padding="10dp"
-                android:paddingLeft="40dp"
-                android:paddingRight="40dp"
                 android:layout_gravity="center"
-                android:gravity="center_vertical|center_horizontal" />
+                android:gravity="center_vertical|center_horizontal"
+                android:layout_weight="1"/>
         </LinearLayout>
 
         <LinearLayout
@@ -259,7 +244,6 @@
             android:paddingBottom="0dp"
             android:layout_weight="0.15">
 
-
             <ImageButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -317,7 +301,6 @@
             android:background="#ffff4a4f"
             android:textColor="#fff"
             android:layout_marginTop="5dp" />
-        <!--</GridLayout>-->
     </LinearLayout>
 
 </FrameLayout>
