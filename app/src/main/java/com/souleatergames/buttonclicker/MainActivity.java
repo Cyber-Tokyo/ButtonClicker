@@ -218,13 +218,14 @@ public class MainActivity extends Activity
                 submitPushed();
                 break;
             case R.id.imageButtonMainCard:
-                mScore = 0;
+                //auto-win cheat
+                /*mScore = 0;
                 gameFinished = true;
                 if(mScore == 0){
                     playerWon("P1");
                 }
                 broadcastScore();
-                break;
+                break;*/
         }
     }
 
