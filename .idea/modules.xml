@@ -3,9 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BaseGameUtils/BaseGameUtils.iml" filepath="$PROJECT_DIR$/BaseGameUtils/BaseGameUtils.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ButtonClicker.iml" filepath="$PROJECT_DIR$/ButtonClicker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Button-Clicker-main.iml" filepath="$PROJECT_DIR$/Button-Clicker-main.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
 </project>
-
