@@ -703,7 +703,7 @@ public class MainActivity extends Activity
         mSecondsLeft = GAME_DURATION;
 
         mainCard = deck.drawCard();
-        setCardImage((ImageView) findViewById(R.id.imageButtonMainCard), mainCard.getRank(), mainCard.getSuit());
+        setCardImage((ImageView) findViewById(R.id.imageButtonMainCard), mainCard.getRank(), mainCard.getSuit(), false);
         addTo = randomNumberGenerator(mainCard.getRank() + 1, 30, randomGenerator);
         addUpTo = (TextView)findViewById(R.id.AddNumber);
         addUpTo.setText("" + addTo);
@@ -773,7 +773,7 @@ public class MainActivity extends Activity
         //myCardsLeft = (TextView) findViewById(R.id.score0);
         //myCardsLeft.setText("P1: "+cardLeftInHand());
 
-        setCardImage((ImageView)findViewById(R.id.imageButtonMainCard), mainCard.getRank(), mainCard.getSuit());
+        setCardImage((ImageView)findViewById(R.id.imageButtonMainCard), mainCard.getRank(), mainCard.getSuit(), false);
 
 
         // run the gameTick() method every second to update the game.
@@ -1123,11 +1123,11 @@ public class MainActivity extends Activity
         hand = new Card[8];
         for (int i = 0; i < 8; i++) {
             hand[i] = deck.drawCard();
-            setCardImage(imageCard[i], hand[i].getRank(), hand[i].getSuit());
+            setCardImage(imageCard[i], hand[i].getRank(), hand[i].getSuit(), true);
         }
     }
 
-    private void setCardImage(ImageView card, int rank, int suit){
+    private void setCardImage(ImageView card, int rank, int suit, Boolean isHandCard){
 
         /*String cardImageURL = Images.getImageURL(rank, suit, isHandCard);
 
@@ -1136,200 +1136,436 @@ public class MainActivity extends Activity
                 .into(card);
         */
 
-        if(suit == 0){
-            switch (rank){
+        if (suit == 0) {
+            switch (rank) {
                 case 1:
-                    card.setImageResource(R.drawable.banana_0001);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_banana_0001);
+                    }else {
+                        card.setImageResource(R.drawable.banana_0001);
+                    }
                     break;
                 case 2:
-                    card.setImageResource(R.drawable.banana_0010);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_banana_0010);
+                    }else {
+                        card.setImageResource(R.drawable.banana_0010);
+                    }
                     break;
                 case 3:
-                    card.setImageResource(R.drawable.banana_0011);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_banana_0011);
+                    }else {
+                        card.setImageResource(R.drawable.banana_0011);
+                    }
                     break;
                 case 4:
-                    card.setImageResource(R.drawable.banana_0100);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_banana_0100);
+                    }else {
+                        card.setImageResource(R.drawable.banana_0100);
+                    }
                     break;
                 case 5:
-                    card.setImageResource(R.drawable.banana_0101);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_banana_0101);
+                    }else {
+                        card.setImageResource(R.drawable.banana_0101);
+                    }
                     break;
                 case 6:
-                    card.setImageResource(R.drawable.banana_0110);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_banana_0110);
+                    }else {
+                        card.setImageResource(R.drawable.banana_0110);
+                    }
                     break;
                 case 7:
-                    card.setImageResource(R.drawable.banana_0111);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_banana_0111);
+                    }else {
+                        card.setImageResource(R.drawable.banana_0111);
+                    }
                     break;
                 case 8:
-                    card.setImageResource(R.drawable.banana_1000);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_banana_1000);
+                    }else {
+                        card.setImageResource(R.drawable.banana_1000);
+                    }
                     break;
                 case 9:
-                    card.setImageResource(R.drawable.banana_1001);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_banana_1001);
+                    }else {
+                        card.setImageResource(R.drawable.banana_1001);
+                    }
                     break;
                 case 10:
-                    card.setImageResource(R.drawable.banana_a);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_banana_a);
+                    }else {
+                        card.setImageResource(R.drawable.banana_a);
+                    }
                     break;
                 case 11:
-                    card.setImageResource(R.drawable.banana_b);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_banana_b);
+                    }else {
+                        card.setImageResource(R.drawable.banana_b);
+                    }
                     break;
                 case 12:
-                    card.setImageResource(R.drawable.banana_c);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_banana_c);
+                    }else {
+                        card.setImageResource(R.drawable.banana_c);
+                    }
                     break;
                 case 13:
-                    card.setImageResource(R.drawable.banana_d);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_banana_d);
+                    }else {
+                        card.setImageResource(R.drawable.banana_d);
+                    }
                     break;
                 case 14:
-                    card.setImageResource(R.drawable.banana_e);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_banana_e);
+                    }else {
+                        card.setImageResource(R.drawable.banana_e);
+                    }
                     break;
                 case 15:
-                    card.setImageResource(R.drawable.banana_f);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_banana_f);
+                    }else {
+                        card.setImageResource(R.drawable.banana_f);
+                    }
                     break;
             }
-        }
-
-        else if(suit == 1){
-            switch (rank){
+        } else if (suit == 1) {
+            switch (rank) {
                 case 1:
-                    card.setImageResource(R.drawable.cat_0001);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cat_0001);
+                    }else {
+                        card.setImageResource(R.drawable.cat_0001);
+                    }
                     break;
                 case 2:
-                    card.setImageResource(R.drawable.cat_0010);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cat_0010);
+                    }else {
+                        card.setImageResource(R.drawable.cat_0010);
+                    }
                     break;
                 case 3:
-                    card.setImageResource(R.drawable.cat_0011);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cat_0011);
+                    }else {
+                        card.setImageResource(R.drawable.cat_0011);
+                    }
                     break;
                 case 4:
-                    card.setImageResource(R.drawable.cat_0100);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cat_0100);
+                    }else {
+                        card.setImageResource(R.drawable.cat_0100);
+                    }
                     break;
                 case 5:
-                    card.setImageResource(R.drawable.cat_0101);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cat_0101);
+                    }else {
+                        card.setImageResource(R.drawable.cat_0101);
+                    }
                     break;
                 case 6:
-                    card.setImageResource(R.drawable.cat_0110);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cat_0110);
+                    }else {
+                        card.setImageResource(R.drawable.cat_0110);
+                    }
                     break;
                 case 7:
-                    card.setImageResource(R.drawable.cat_0111);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cat_0111);
+                    }else {
+                        card.setImageResource(R.drawable.cat_0111);
+                    }
                     break;
                 case 8:
-                    card.setImageResource(R.drawable.cat_1000);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cat_1000);
+                    }else {
+                        card.setImageResource(R.drawable.cat_1000);
+                    }
                     break;
                 case 9:
-                    card.setImageResource(R.drawable.cat_1001);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cat_1001);
+                    }else {
+                        card.setImageResource(R.drawable.cat_1001);
+                    }
                     break;
                 case 10:
-                    card.setImageResource(R.drawable.cat_a);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cat_a);
+                    }else {
+                        card.setImageResource(R.drawable.cat_a);
+                    }
                     break;
                 case 11:
-                    card.setImageResource(R.drawable.cat_b);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cat_b);
+                    }else {
+                        card.setImageResource(R.drawable.cat_b);
+                    }
                     break;
                 case 12:
-                    card.setImageResource(R.drawable.cat_c);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cat_c);
+                    }else {
+                        card.setImageResource(R.drawable.cat_c);
+                    }
                     break;
                 case 13:
-                    card.setImageResource(R.drawable.cat_d);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cat_d);
+                    }else {
+                        card.setImageResource(R.drawable.cat_d);
+                    }
                     break;
                 case 14:
-                    card.setImageResource(R.drawable.cat_e);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cat_e);
+                    }else {
+                        card.setImageResource(R.drawable.cat_e);
+                    }
                     break;
                 case 15:
-                    card.setImageResource(R.drawable.cat_f);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cat_f);
+                    }else {
+                        card.setImageResource(R.drawable.cat_f);
+                    }
                     break;
             }
-        }
-        else if(suit == 2){
-            switch (rank){
+        } else if (suit == 2) {
+            switch (rank) {
                 case 1:
-                    card.setImageResource(R.drawable.philosoraptor_0001);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_philosoraptor_0001);
+                    }else {
+                        card.setImageResource(R.drawable.philosoraptor_0001);
+                    }
                     break;
                 case 2:
-                    card.setImageResource(R.drawable.philosoraptor_0010);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_philosoraptor_0010);
+                    }else {
+                        card.setImageResource(R.drawable.philosoraptor_0010);
+                    }
                     break;
                 case 3:
-                    card.setImageResource(R.drawable.philosoraptor_0011);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_philosoraptor_0011);
+                    }else {
+                        card.setImageResource(R.drawable.philosoraptor_0011);
+                    }
                     break;
                 case 4:
-                    card.setImageResource(R.drawable.philosoraptor_0100);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_philosoraptor_0100);
+                    }else {
+                        card.setImageResource(R.drawable.philosoraptor_0100);
+                    }
                     break;
                 case 5:
-                    card.setImageResource(R.drawable.philosoraptor_0101);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_philosoraptor_0101);
+                    }else {
+                        card.setImageResource(R.drawable.philosoraptor_0101);
+                    }
                     break;
                 case 6:
-                    card.setImageResource(R.drawable.philosoraptor_0110);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_philosoraptor_0110);
+                    }else {
+                        card.setImageResource(R.drawable.philosoraptor_0110);
+                    }
                     break;
                 case 7:
-                    card.setImageResource(R.drawable.philosoraptor_0111);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_philosoraptor_0111);
+                    }else {
+                        card.setImageResource(R.drawable.philosoraptor_0111);
+                    }
                     break;
                 case 8:
-                    card.setImageResource(R.drawable.philosoraptor_1000);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_philosoraptor_1000);
+                    }else {
+                        card.setImageResource(R.drawable.philosoraptor_1000);
+                    }
                     break;
                 case 9:
-                    card.setImageResource(R.drawable.philosoraptor_1001);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_philosoraptor_1001);
+                    }else {
+                        card.setImageResource(R.drawable.philosoraptor_1001);
+                    }
                     break;
                 case 10:
-                    card.setImageResource(R.drawable.philosoraptor_a);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_philosoraptor_a);
+                    }else {
+                        card.setImageResource(R.drawable.philosoraptor_a);
+                    }
                     break;
                 case 11:
-                    card.setImageResource(R.drawable.philosoraptor_b);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_philosoraptor_b);
+                    }else {
+                        card.setImageResource(R.drawable.philosoraptor_b);
+                    }
                     break;
                 case 12:
-                    card.setImageResource(R.drawable.philosoraptor_c);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_philosoraptor_c);
+                    }else {
+                        card.setImageResource(R.drawable.philosoraptor_c);
+                    }
                     break;
                 case 13:
-                    card.setImageResource(R.drawable.philosoraptor_d);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_philosoraptor_d);
+                    }else {
+                        card.setImageResource(R.drawable.philosoraptor_d);
+                    }
                     break;
                 case 14:
-                    card.setImageResource(R.drawable.philosoraptor_e);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_philosoraptor_e);
+                    }else {
+                        card.setImageResource(R.drawable.philosoraptor_e);
+                    }
                     break;
                 case 15:
-                    card.setImageResource(R.drawable.philosoraptor_f);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_philosoraptor_f);
+                    }else {
+                        card.setImageResource(R.drawable.philosoraptor_f);
+                    }
                     break;
             }
-        }
-        else if(suit == 3){
-            switch (rank){
+        } else if (suit == 3) {
+            switch (rank) {
                 case 1:
-                    card.setImageResource(R.drawable.cursor_0001);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cursor_0001);
+                    }else {
+                        card.setImageResource(R.drawable.cursor_0001);
+                    }
                     break;
                 case 2:
-                    card.setImageResource(R.drawable.cursor_0010);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cursor_0010);
+                    }else {
+                        card.setImageResource(R.drawable.cursor_0010);
+                    }
                     break;
                 case 3:
-                    card.setImageResource(R.drawable.cursor_0011);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cursor_0011);
+                    }else {
+                        card.setImageResource(R.drawable.cursor_0011);
+                    }
                     break;
                 case 4:
-                    card.setImageResource(R.drawable.cursor_0100);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cursor_0100);
+                    }else {
+                        card.setImageResource(R.drawable.cursor_0100);
+                    }
                     break;
                 case 5:
-                    card.setImageResource(R.drawable.cursor_0101);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cursor_0101);
+                    }else {
+                        card.setImageResource(R.drawable.cursor_0101);
+                    }
                     break;
                 case 6:
-                    card.setImageResource(R.drawable.cursor_0110);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cursor_0110);
+                    }else {
+                        card.setImageResource(R.drawable.cursor_0110);
+                    }
                     break;
                 case 7:
-                    card.setImageResource(R.drawable.cursor_0111);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cursor_0111);
+                    }else {
+                        card.setImageResource(R.drawable.cursor_0111);
+                    }
                     break;
                 case 8:
-                    card.setImageResource(R.drawable.cursor_1000);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cursor_1000);
+                    }else {
+                        card.setImageResource(R.drawable.cursor_1000);
+                    }
                     break;
                 case 9:
-                    card.setImageResource(R.drawable.cursor_1001);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cursor_1001);
+                    }else {
+                        card.setImageResource(R.drawable.cursor_1001);
+                    }
                     break;
                 case 10:
-                    card.setImageResource(R.drawable.cursor_a);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cursor_a);
+                    }else {
+                        card.setImageResource(R.drawable.cursor_a);
+                    }
                     break;
                 case 11:
-                    card.setImageResource(R.drawable.cursor_b);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cursor_b);
+                    }else {
+                        card.setImageResource(R.drawable.cursor_b);
+                    }
                     break;
                 case 12:
-                    card.setImageResource(R.drawable.cursor_c);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cursor_c);
+                    }else {
+                        card.setImageResource(R.drawable.cursor_c);
+                    }
                     break;
                 case 13:
-                    card.setImageResource(R.drawable.cursor_d);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cursor_d);
+                    }else {
+                        card.setImageResource(R.drawable.cursor_d);
+                    }
                     break;
                 case 14:
-                    card.setImageResource(R.drawable.cursor_e);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cursor_e);
+                    }else {
+                        card.setImageResource(R.drawable.cursor_e);
+                    }
                     break;
                 case 15:
-                    card.setImageResource(R.drawable.cursor_f);
+                    if(isHandCard){
+                        card.setImageResource(R.drawable.sq_cursor_f);
+                    }else {
+                        card.setImageResource(R.drawable.cursor_f);
+                    }
                     break;
             }
         }
