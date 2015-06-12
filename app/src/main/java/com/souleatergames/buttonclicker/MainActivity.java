@@ -141,19 +141,19 @@ public class MainActivity extends Activity
                 // Check to see the developer who's running this sample code read the instructions :-)
                 // NOTE: this check is here only because this is a sample! Don't include this
                 // check in your actual production app.
-                if (!BaseGameUtils.verifySampleSetup(this, R.string.app_id)) {
-                  Log.w(TAG, "*** Warning: setup problems detected. Sign in may not work!");
-                }
+                //if (!BaseGameUtils.verifySampleSetup(this, R.string.app_id)) {
+                  //Log.w(TAG, "*** Warning: setup problems detected. Sign in may not work!");
+                //}
 
                 // start the sign-in flow
-                Log.d(TAG, "Sign-in button clicked");
+                //Log.d(TAG, "Sign-in button clicked");
                 mSignInClicked = true;
                 mGoogleApiClient.connect();
             break;
             case R.id.button_sign_out:
                 // user wants to sign out
                 // sign out.
-                Log.d(TAG, "Sign-out button clicked");
+                //Log.d(TAG, "Sign-out button clicked");
                 mSignInClicked = false;
                 Games.signOut(mGoogleApiClient);
                 mGoogleApiClient.disconnect();
@@ -182,35 +182,35 @@ public class MainActivity extends Activity
                 startQuickGame();
                 break;
             case R.id.imageButton1:
-                Log.d(TAG, "Card 1 Pushed");
+                //Log.d(TAG, "Card 1 Pushed");
                 cardPushed(0);
                 break;
             case R.id.imageButton2:
-                Log.d(TAG, "Card 2 Pushed");
+                //Log.d(TAG, "Card 2 Pushed");
                 cardPushed(1);
                 break;
             case R.id.imageButton3:
-                Log.d(TAG, "Card 3 Pushed");
+                //Log.d(TAG, "Card 3 Pushed");
                 cardPushed(2);
                 break;
             case R.id.imageButton4:
-                Log.d(TAG, "Card 4 Pushed");
+                //Log.d(TAG, "Card 4 Pushed");
                 cardPushed(3);
                 break;
             case R.id.imageButton5:
-                Log.d(TAG, "Card 5 Pushed");
+                //Log.d(TAG, "Card 5 Pushed");
                 cardPushed(4);
                 break;
             case R.id.imageButton6:
-                Log.d(TAG, "Card 6 Pushed");
+                //Log.d(TAG, "Card 6 Pushed");
                 cardPushed(5);
                 break;
             case R.id.imageButton7:
-                Log.d(TAG, "Card 7 Pushed");
+                //Log.d(TAG, "Card 7 Pushed");
                 cardPushed(6);
                 break;
             case R.id.imageButton8:
-                Log.d(TAG, "Card 8 Pushed");
+                //Log.d(TAG, "Card 8 Pushed");
                 cardPushed(7);
                 break;
             case R.id.button9:
@@ -262,12 +262,12 @@ public class MainActivity extends Activity
                 // we got the result from the "waiting room" UI.
                 if (responseCode == Activity.RESULT_OK) {
                     // ready to start playing
-                    Log.d(TAG, "Starting game (waiting room returned OK).");
+                    //Log.d(TAG, "Starting game (waiting room returned OK).");
 
                     //"King" will generate a seed and broadcast it to all other players
                     if (amIKing()) {
                         mSeed = System.currentTimeMillis();
-                        Log.d(TAG, "seed " + mSeed);
+                        //Log.d(TAG, "seed " + mSeed);
                         broadcastSeed(mSeed);
                     }
                     //wait 5sec before beginning game so players can receive seed
@@ -283,15 +283,15 @@ public class MainActivity extends Activity
                     // player indicated that they want to leave the room
                     leaveRoom();
                 } else if (responseCode == Activity.RESULT_CANCELED) {
-                    // Dialog was cancelled (user pressed back key, for instance). In our game,
+                    // DiaLog was cancelled (user pressed back key, for instance). In our game,
                     // this means leaving the room too. In more elaborate games, this could mean
                     // something else (like minimizing the waiting room UI).
                     leaveRoom();
                 }
                 break;
             case RC_SIGN_IN:
-                Log.d(TAG, "onActivityResult with requestCode == RC_SIGN_IN, responseCode="
-                    + responseCode + ", intent=" + intent);
+                //Log.d(TAG, "onActivityResult with requestCode == RC_SIGN_IN, responseCode="
+                    //+ responseCode + ", intent=" + intent);
                 mSignInClicked = false;
                 mResolvingConnectionFailure = false;
                 if (responseCode == RESULT_OK) {
@@ -308,16 +308,16 @@ public class MainActivity extends Activity
     // "Invite friends" button. We react by creating a room with those players.
     private void handleSelectPlayersResult(int response, Intent data) {
         if (response != Activity.RESULT_OK) {
-            Log.w(TAG, "*** select players UI cancelled, " + response);
+            //Log.w(TAG, "*** select players UI cancelled, " + response);
             switchToMainScreen();
             return;
         }
 
-        Log.d(TAG, "Select players UI succeeded.");
+        //Log.d(TAG, "Select players UI succeeded.");
 
         // get the invitee list
         final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
-        Log.d(TAG, "Invitee count: " + invitees.size());
+        //Log.d(TAG, "Invitee count: " + invitees.size());
 
         // get the automatch criteria
         Bundle autoMatchCriteria = null;
@@ -326,11 +326,11 @@ public class MainActivity extends Activity
         if (minAutoMatchPlayers > 0 || maxAutoMatchPlayers > 0) {
             autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
                     minAutoMatchPlayers, maxAutoMatchPlayers, 0);
-            Log.d(TAG, "Automatch criteria: " + autoMatchCriteria);
+            //Log.d(TAG, "Automatch criteria: " + autoMatchCriteria);
         }
 
         // create the room
-        Log.d(TAG, "Creating room...");
+        //Log.d(TAG, "Creating room...");
         RoomConfig.Builder rtmConfigBuilder = RoomConfig.builder(this);
         rtmConfigBuilder.addPlayersToInvite(invitees);
         rtmConfigBuilder.setMessageReceivedListener(this);
@@ -342,19 +342,19 @@ public class MainActivity extends Activity
         keepScreenOn();
         resetGameVars();
         Games.RealTimeMultiplayer.create(mGoogleApiClient, rtmConfigBuilder.build());
-        Log.d(TAG, "Room created, waiting for it to be ready...");
+        //Log.d(TAG, "Room created, waiting for it to be ready...");
     }
 
     // Handle the result of the invitation inbox UI, where the player can pick an invitation
     // to accept. We react by accepting the selected invitation, if any.
     private void handleInvitationInboxResult(int response, Intent data) {
         if (response != Activity.RESULT_OK) {
-            Log.w(TAG, "*** invitation inbox UI cancelled, " + response);
+            //Log.w(TAG, "*** invitation inbox UI cancelled, " + response);
             switchToMainScreen();
             return;
         }
 
-        Log.d(TAG, "Invitation inbox UI succeeded.");
+        //Log.d(TAG, "Invitation inbox UI succeeded.");
         Invitation inv = data.getExtras().getParcelable(Multiplayer.EXTRA_INVITATION);
 
         // accept invitation
@@ -364,7 +364,7 @@ public class MainActivity extends Activity
     // Accept the given invitation.
     void acceptInviteToRoom(String invId) {
         // accept the invitation
-        Log.d(TAG, "Accepting invitation: " + invId);
+        //Log.d(TAG, "Accepting invitation: " + invId);
         RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this);
         roomConfigBuilder.setInvitationIdToAccept(invId)
                 .setMessageReceivedListener(this)
@@ -378,7 +378,7 @@ public class MainActivity extends Activity
     // Activity is going to the background. We have to leave the current room.
     @Override
     public void onStop() {
-        Log.d(TAG, "**** got onStop");
+        //Log.d(TAG, "**** got onStop");
 
         // if we're in a room, leave it.
         leaveRoom();
@@ -403,11 +403,11 @@ public class MainActivity extends Activity
     public void onStart() {
         switchToScreen(R.id.screen_wait);
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-          Log.w(TAG,
-              "GameHelper: client was already connected on onStart()");
+          //Log.w(TAG,
+              //"GameHelper: client was already connected on onStart()");
               switchToMainScreen();
         } else {
-          Log.d(TAG,"Connecting client.");
+          //Log.d(TAG,"Connecting client.");
           mGoogleApiClient.connect();
         }
         super.onStart();
@@ -426,7 +426,7 @@ public class MainActivity extends Activity
 
     // Leave the room.
     void leaveRoom() {
-        Log.d(TAG, "Leaving room.");
+        //Log.d(TAG, "Leaving room.");
         mSecondsLeft = 0;
         gameFinished = true;
         stopKeepingScreenOn();
@@ -480,21 +480,21 @@ public class MainActivity extends Activity
 
     @Override
     public void onConnected(Bundle connectionHint) {
-      Log.d(TAG, "onConnected() called. Sign in successful!");
+      //Log.d(TAG, "onConnected() called. Sign in successful!");
 
-      Log.d(TAG, "Sign-in succeeded.");
+      //Log.d(TAG, "Sign-in succeeded.");
 
       // register listener so we are notified if we receive an invitation to play
       // while we are in the game
       Games.Invitations.registerInvitationListener(mGoogleApiClient, this);
 
       if (connectionHint != null) {
-        Log.d(TAG, "onConnected: connection hint provided. Checking for invite.");
+        //Log.d(TAG, "onConnected: connection hint provided. Checking for invite.");
         Invitation inv = connectionHint
             .getParcelable(Multiplayer.EXTRA_INVITATION);
         if (inv != null && inv.getInvitationId() != null) {
           // retrieve and cache the invitation ID
-          Log.d(TAG,"onConnected: connection hint has a room invite!");
+          //Log.d(TAG,"onConnected: connection hint has a room invite!");
           acceptInviteToRoom(inv.getInvitationId());
           return;
         }
@@ -505,16 +505,16 @@ public class MainActivity extends Activity
 
     @Override
     public void onConnectionSuspended(int i) {
-      Log.d(TAG, "onConnectionSuspended() called. Trying to reconnect.");
+      //Log.d(TAG, "onConnectionSuspended() called. Trying to reconnect.");
       mGoogleApiClient.connect();
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-      Log.d(TAG, "onConnectionFailed() called, result: " + connectionResult);
+      //Log.d(TAG, "onConnectionFailed() called, result: " + connectionResult);
 
       if (mResolvingConnectionFailure) {
-        Log.d(TAG, "onConnectionFailed() ignoring connection failure; already resolving.");
+        //Log.d(TAG, "onConnectionFailed() ignoring connection failure; already resolving.");
         return;
       }
 
@@ -532,7 +532,7 @@ public class MainActivity extends Activity
     // is connected yet).
     @Override
     public void onConnectedToRoom(Room room) {
-        Log.d(TAG, "onConnectedToRoom.");
+        //Log.d(TAG, "onConnectedToRoom.");
 
         // get room ID, participants and my ID:
         mRoomId = room.getRoomId();
@@ -540,9 +540,9 @@ public class MainActivity extends Activity
         mMyId = room.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient));
 
         // print out the list of participants (for debug purposes)
-        Log.d(TAG, "Room ID: " + mRoomId);
-        Log.d(TAG, "My ID " + mMyId);
-        Log.d(TAG, "<< CONNECTED TO ROOM>>");
+        //Log.d(TAG, "Room ID: " + mRoomId);
+        //Log.d(TAG, "My ID " + mMyId);
+        //Log.d(TAG, "<< CONNECTED TO ROOM>>");
     }
 
     // Called when we've successfully left the room (this happens a result of voluntarily leaving
@@ -550,7 +550,7 @@ public class MainActivity extends Activity
     @Override
     public void onLeftRoom(int statusCode, String roomId) {
         // we have left the room; return to main screen.
-        Log.d(TAG, "onLeftRoom, code " + statusCode);
+        //Log.d(TAG, "onLeftRoom, code " + statusCode);
         switchToMainScreen();
     }
 
@@ -570,9 +570,9 @@ public class MainActivity extends Activity
     // Called when room has been created
     @Override
     public void onRoomCreated(int statusCode, Room room) {
-        Log.d(TAG, "onRoomCreated(" + statusCode + ", " + room + ")");
+        //Log.d(TAG, "onRoomCreated(" + statusCode + ", " + room + ")");
         if (statusCode != GamesStatusCodes.STATUS_OK) {
-            Log.e(TAG, "*** Error: onRoomCreated, status " + statusCode);
+            //Log.e(TAG, "*** Error: onRoomCreated, status " + statusCode);
             showGameError();
             return;
         }
@@ -584,9 +584,9 @@ public class MainActivity extends Activity
     // Called when room is fully connected.
     @Override
     public void onRoomConnected(int statusCode, Room room) {
-        Log.d(TAG, "onRoomConnected(" + statusCode + ", " + room + ")");
+        //Log.d(TAG, "onRoomConnected(" + statusCode + ", " + room + ")");
         if (statusCode != GamesStatusCodes.STATUS_OK) {
-            Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
+            //Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
             showGameError();
             return;
         }
@@ -595,9 +595,9 @@ public class MainActivity extends Activity
 
     @Override
     public void onJoinedRoom(int statusCode, Room room) {
-        Log.d(TAG, "onJoinedRoom(" + statusCode + ", " + room + ")");
+        //Log.d(TAG, "onJoinedRoom(" + statusCode + ", " + room + ")");
         if (statusCode != GamesStatusCodes.STATUS_OK) {
-            Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
+            //Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
             showGameError();
             return;
         }
@@ -831,7 +831,7 @@ public class MainActivity extends Activity
     }
 
     void submitPushed(){
-        Log.d(TAG, myTotalCardValue + mainCard.getRank() +" =?= " + addTo);
+        //Log.d(TAG, myTotalCardValue + mainCard.getRank() +" =?= " + addTo);
         if (myTotalCardValue + mainCard.getRank() == addTo) {
             Toast.makeText(getApplicationContext(), "TRUE", Toast.LENGTH_SHORT).show();
 
@@ -863,7 +863,7 @@ public class MainActivity extends Activity
             }
         }
 
-        Log.d(TAG, "cards left in hand" +cardsLeftHand+"");
+        //Log.d(TAG, "cards left in hand" +cardsLeftHand+"");
         return cardsLeftHand;
 
     }
@@ -899,7 +899,7 @@ public class MainActivity extends Activity
         String sender = rtm.getSenderParticipantId();
 
         if (buf[0] == 'h') {
-            Log.d(TAG, "Hand Message received: " + (char) buf[0] + "/" + (int) buf[1]);
+            //Log.d(TAG, "Hand Message received: " + (char) buf[0] + "/" + (int) buf[1]);
             // score update.
             int existingScore = mParticipantScore.containsKey(sender) ?
                     mParticipantScore.get(sender) : 8;
@@ -919,12 +919,12 @@ public class MainActivity extends Activity
             updatePeerScoresDisplay();
         }
         else if(buf[0] == 'n'){
-            Log.d(TAG, "Other player scored start new round");
+            //Log.d(TAG, "Other player scored start new round");
             resetNewRound();
         }
         else {
-           Log.d(TAG, "Message received: " + buf[0] + buf[1] + buf[2] + buf[3] + buf[4] + buf[5] + buf[6] + buf[7]);
-           Log.d(TAG, "Message in Long: " + bytesToLong(buf));
+           //Log.d(TAG, "Message received: " + buf[0] + buf[1] + buf[2] + buf[3] + buf[4] + buf[5] + buf[6] + buf[7]);
+           //Log.d(TAG, "Message in Long: " + bytesToLong(buf));
            mSeed = bytesToLong(buf);
         }
     }
@@ -968,7 +968,7 @@ public class MainActivity extends Activity
             if (p.getStatus() != Participant.STATUS_JOINED) {
                 continue;
             }
-            Log.d(TAG, "Seed Sent: " + bytesToLong(mSeedBuf));
+            //Log.d(TAG, "Seed Sent: " + bytesToLong(mSeedBuf));
             Games.RealTimeMultiplayer.sendReliableMessage(mGoogleApiClient, null, mSeedBuf,
                     mRoomId, p.getParticipantId());
         }
