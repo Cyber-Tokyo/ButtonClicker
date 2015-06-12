@@ -194,7 +194,7 @@
 
             <ImageButton
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
                 android:text=""
                 android:id="@+id/imageButton1"
                 android:layout_row="0"
@@ -202,10 +202,11 @@
                 android:src="@drawable/zzback_of_card"
                 android:scaleType="fitXY"
                 android:background="@android:color/transparent"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:layout_margin="1dp" />
             <ImageButton
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
                 android:text=""
                 android:id="@+id/imageButton2"
                 android:layout_row="0"
@@ -213,10 +214,11 @@
                 android:src="@drawable/zzback_of_card"
                 android:scaleType="fitXY"
                 android:background="@android:color/transparent"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:layout_margin="1dp" />
             <ImageButton
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
                 android:text=""
                 android:id="@+id/imageButton3"
                 android:layout_row="0"
@@ -224,10 +226,11 @@
                 android:src="@drawable/zzback_of_card"
                 android:scaleType="fitXY"
                 android:background="@android:color/transparent"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:layout_margin="1dp" />
             <ImageButton
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
                 android:text=""
                 android:id="@+id/imageButton4"
                 android:layout_row="0"
@@ -235,7 +238,8 @@
                 android:src="@drawable/zzback_of_card"
                 android:scaleType="fitXY"
                 android:background="@android:color/transparent"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:layout_margin="1dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -248,7 +252,7 @@
 
             <ImageButton
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
                 android:text=""
                 android:id="@+id/imageButton5"
                 android:layout_row="1"
@@ -256,10 +260,11 @@
                 android:src="@drawable/zzback_of_card"
                 android:scaleType="fitXY"
                 android:background="@android:color/transparent"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:layout_margin="1dp" />
             <ImageButton
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
                 android:text=""
                 android:id="@+id/imageButton6"
                 android:layout_row="1"
@@ -267,10 +272,11 @@
                 android:src="@drawable/zzback_of_card"
                 android:scaleType="fitXY"
                 android:background="@android:color/transparent"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:layout_margin="1dp" />
             <ImageButton
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
                 android:text=""
                 android:id="@+id/imageButton7"
                 android:layout_row="1"
@@ -278,10 +284,11 @@
                 android:src="@drawable/zzback_of_card"
                 android:scaleType="fitXY"
                 android:background="@android:color/transparent"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:layout_margin="1dp" />
             <ImageButton
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
                 android:text=""
                 android:id="@+id/imageButton8"
                 android:layout_row="1"
@@ -289,7 +296,8 @@
                 android:src="@drawable/zzback_of_card"
                 android:scaleType="fitXY"
                 android:background="@android:color/transparent"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:layout_margin="1dp" />
 
         </LinearLayout>
 

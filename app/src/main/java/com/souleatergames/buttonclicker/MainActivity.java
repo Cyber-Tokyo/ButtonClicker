@@ -716,7 +716,7 @@ public class MainActivity extends Activity
                 imageCard[i].clearColorFilter();
             }
         }
-        cardsLeft.setText(deck.getCardsRemaining()+"");
+        cardsLeft.setText("cards: " + deck.getCardsRemaining() + "");
     }
 
     // Start the gameplay phase of the game.
@@ -767,7 +767,7 @@ public class MainActivity extends Activity
         else{
             drawHand();
         }
-        cardsLeft.setText(deck.getCardsRemaining()+"");
+        cardsLeft.setText("cards: " + deck.getCardsRemaining() + "");
 
         reenableCards();
         //myCardsLeft = (TextView) findViewById(R.id.score0);
